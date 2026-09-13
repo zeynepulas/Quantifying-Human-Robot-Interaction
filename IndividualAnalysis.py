@@ -7,7 +7,7 @@ from feat import Detector
 # CONFIGURATION
 # ==========================================
 PARTICIPANT_ID = 1
-ROBOT_TRIALS = ["Robot1", "Robot2", "Robot3", "Robot4"]
+ROBOT_TRIALS = ["Robot1", "Robot2", "Robot3", "Robot4", "Human"]
 
 # You only need these four AUs (AU4, AU5, AU7, AU9). Restricting to them keeps the
 # merged CSV small and makes it obvious if Py-Feat's column names don't match what
