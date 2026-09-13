@@ -18,6 +18,7 @@ ROBOT_TRIALS = [
     {"name": "Robot2", "display_name": "Social / Friendly (Stylized)", "video": "robot2.mp4"},
     {"name": "Robot3", "display_name": "Humanoid", "video": "robot3.mp4"},
     {"name": "Robot4", "display_name": "Super Realistic / Eerie", "video": "robot4.mp4"},
+    {"name": "Human", "display_name": "Human (baseline anchor)", "video": "human.mp4"},
 ]
 
 GODSPEED_DIMENSIONS = {
@@ -100,8 +101,8 @@ class UncannyValleyApp:
 
         instructions = (
             "Welcome to the experiment.\n\n"
-            f"You will be presented with a series of {len(ROBOT_TRIALS)} robot stimulus videos.\n\n"
-            "- It will take approximately 10 minutes.\n\n"
+            f"You will be presented with a series of {len(ROBOT_TRIALS)} stimulus videos.\n\n"
+            "- It will take approximately 20 minutes.\n\n"
             "- Before each video, there will be a 30-second resting baseline.\n\n"
             "- After each video, you will complete the questionnaire on the screen.\n\n"
             "- After the completion of each questionnaire the next video will play automatically.\n\n"
