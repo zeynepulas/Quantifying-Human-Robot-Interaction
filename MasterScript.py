@@ -79,6 +79,7 @@ class UncannyValleyApp:
         self.is_trial_recording = False
         self.ppi_file = None  # Safe initialization
         self.cap = None  # Webcam handle -- opened once for the whole session, see initialize_camera()
+        self.sensor_connected = False  # True only after a real Polar Bluetooth connection succeeds
         
         self.current_trial_name = "Preparation"
         self.current_phase = "Setup"
@@ -132,21 +133,22 @@ class UncannyValleyApp:
         )
         self.connect_btn.pack(pady=5)
 
-        self.connection_status_lbl = tk.Label(self.exp_frame, text="Status: Not Connected (Optional for Testing)", font=("Arial", 11, "italic"), fg="#7f8c8d", bg="#eef2f7")
+        self.connection_status_lbl = tk.Label(self.exp_frame, text="Status: Not Connected", font=("Arial", 11, "italic"), fg="#7f8c8d", bg="#eef2f7")
         self.connection_status_lbl.pack(pady=5)
 
-        # Enabled by default so you can test without connecting hardware!
+        # Disabled until the Polar sensor is connected -- this build is for real
+        # participant sessions, so there is no "continue without a sensor" option.
         self.start_btn = tk.Button(
             self.container, 
-            text="Start Experiment (Test Mode Enabled)", 
+            text="Start Experiment (Connect Sensor First)", 
             font=("Arial", 14, "bold"), 
-            bg="#2ecc71", 
+            bg="#95a5a6", 
             fg="black", 
             padx=25, 
             pady=12, 
             bd=0, 
-            state="normal", 
-            cursor="hand2", 
+            state="disabled", 
+            cursor="arrow", 
             command=self.begin_experiment_session
         )
         self.start_btn.pack(pady=20)
@@ -217,23 +219,36 @@ class UncannyValleyApp:
         asyncio.run(_stream())
 
     def connection_success_ui(self):
+        self.sensor_connected = True
         self.connection_status_lbl.config(text="Status: Connected & Streaming ✔", fg="#27ae60")
         self.connect_btn.config(text="Connected Successfully", bg="#2ecc71")
+        self.start_btn.config(text="Start Experiment", state="normal", bg="#2ecc71", cursor="hand2")
         messagebox.showinfo("Bluetooth Ready", "Polar Sense connected successfully!")
 
     def connection_failed_ui(self, err_msg):
         self.is_experiment_running = False
         self.connect_btn.config(state="normal", text="1. Connect Bluetooth Sensor (Polar Sense)", bg="#f39c12")
-        self.connection_status_lbl.config(text="Status: Connection Failed (Test mode available)", fg="#c0392b")
+        self.connection_status_lbl.config(text="Status: Connection Failed -- please retry", fg="#c0392b")
 
     def begin_experiment_session(self):
+        if not self.sensor_connected:
+            # The Start button is disabled until the sensor connects, so this should
+            # be unreachable in normal use -- kept only as a defensive fallback.
+            messagebox.showerror(
+                "Sensor Not Connected",
+                "The Polar sensor must be connected before starting a session.\n\n"
+                "Click '1. Connect Bluetooth Sensor (Polar Sense)' and wait for the "
+                "'Connected & Streaming' confirmation, then try again."
+            )
+            return
+
         if not self.ppi_file:
             ppi_filename = f"participant_{self.participant_id}_continuous_ppi.csv"
             try:
                 self.ppi_file = open(ppi_filename, "w", buffering=1)
                 self.ppi_file.write("absolute_time,elapsed_trial_sec,trial_name,phase,ppi_ms,heart_rate,error_estimate,invalid_ppi,skin_contact_status\n")
             except Exception as e:
-                print(f"[!] Warning: Could not create test PPI file: {e}")
+                print(f"[!] Warning: Could not create PPI file: {e}")
 
         if self.cap is None:
             camera_ok = self.initialize_camera()
