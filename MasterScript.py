@@ -54,7 +54,7 @@ GODSPEED_DIMENSIONS = {
     "Perceived Safety": [
         ("Anxious / Ängstlich", "Relaxed / Entspannt", "safety_1"),
         ("Agitated / Aufgeregt", "Calm / Ruhig", "safety_2"),
-        ("Quiescent / Ruhig", "Surprised / Überrascht", "safety_3")
+        ("Still / Ruhig", "Surprised / Überrascht", "safety_3")
     ]
 }
 
@@ -364,7 +364,16 @@ class UncannyValleyApp:
             self.is_trial_recording = False
             recording_thread.join()
             self.root.deiconify()
-            self.show_questionnaire_screen(trial_data)
+            messagebox.showerror(
+                "Stimulus Video Missing",
+                f"Could not find the video file for this trial:\n\n{video_path}\n\n"
+                f"No video was shown, so this trial is being skipped rather than "
+                f"recorded as if it played. Add the missing file before the next "
+                f"session, and note that this participant is missing data for "
+                f"this condition."
+            )
+            self.current_trial_idx += 1
+            self.start_next_trial()
             return
 
         # Launch VLC natively via subprocess for absolute hardware-level A/V sync & full screen
