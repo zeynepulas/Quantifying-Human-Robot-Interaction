@@ -473,7 +473,17 @@ class UncannyValleyApp:
         title = tk.Label(scrollable_frame, text=f"Questionnaire: {display_name}", font=("Arial", 22, "bold"), fg="#2c3e50", bg="#f4f6f9")
         title.pack(pady=(20, 5))
 
-        instruction = tk.Label(scrollable_frame, text="Please rate your impression on the following scales (1 = Low to 5 = High).\nPlease scroll down using the scrollbar on the right side of the screen and click 'Submit' when finished.", font=("Arial", 12), fg="#7f8c8d", bg="#f4f6f9")
+        instruction = tk.Label(
+            scrollable_frame,
+            text=(
+                "For each pair of words below, choose the number that best matches your impression of the robot.\n"
+                "The two ends of the scale are opposite words -- 1 is closest to the word on the left, 5 is closest to the word on the right, and 3 means unsure or in between.\n"
+                "There are no right or wrong answers -- please go with your first impression.\n"
+                "Example: for \"Fake -- Natural,\" choosing 4 means the robot felt mostly natural to you, but not entirely.\n\n"
+                "Scroll down to see all five sections and click 'Submit' when finished."
+            ),
+            font=("Arial", 12), fg="#7f8c8d", bg="#f4f6f9", justify="center"
+        )
         instruction.pack(pady=(0, 20))
 
         self.rating_vars = {}
